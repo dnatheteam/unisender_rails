@@ -1,3 +1,4 @@
+require 'unisender_rails/sender'
 require 'unisender_rails/version'
 
 module UnisenderRails
