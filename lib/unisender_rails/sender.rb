@@ -3,6 +3,8 @@ require 'uni_sender'
 module UnisenderRails
   class Sender
 
+    attr_reader :settings
+
     def initialize(args)
       @settings = { api_key: nil }
       args.each do |arg_name, arg_value|
