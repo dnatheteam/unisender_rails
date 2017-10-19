@@ -1,7 +1,7 @@
-require "unisender_rails/version"
+require 'unisender_rails/version'
 
 module UnisenderRails
-  module Installser
+  module Installer
     extend self
 
     def install
@@ -10,4 +10,4 @@ module UnisenderRails
   end
 end
 
-UnisenderRails::Installser.install
+UnisenderRails::Installer.install
