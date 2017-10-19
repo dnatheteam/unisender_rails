@@ -20,21 +20,11 @@ module UnisenderRails
       end
     end
 
-    private
-
-    def settings
-      @settings
-    end
-
-    def client
-      @client
-    end
-
     def deliver_email!(mail)
       mail_to = [*(mail.to)]
-      list_id = settings[:list_id]
-      client.subscribe fields: { email: mail_to }, list_ids: list_id, double_optin: 3
-      client.sendEmail subject: mail.subject,
+      list_id = @settings[:list_id]
+      @client.subscribe fields: { email: mail_to }, list_ids: list_id, double_optin: 3
+      @client.sendEmail subject: mail.subject,
                        body: mail.body,
                        sender_email: mail.from,
                        email: mail_to,
@@ -54,8 +44,8 @@ module UnisenderRails
         lang: @settings[:lang] || 'ru',
         body: mail.body
       }
-      result = client.createEmailMessage(email_options)['result']
-      client.createCampaign message_id: result['message_id'],
+      result = @client.createEmailMessage(email_options)['result']
+      @client.createCampaign message_id: result['message_id'],
                             contacts: mail_to.join(','),
                             defer: 1
     end
