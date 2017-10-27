@@ -24,7 +24,7 @@ module UnisenderRails
     end
 
     def deliver_email!(mail)
-      mail_to = [*(mail.to)]
+      mail_to = [*(mail.to)].first
       list_id = @settings[:list_id]
       result = @client.subscribe fields: { email: mail_to }, list_ids: list_id, double_optin: 3
       @logger.info "UNISENDER:Subscribe '#{mail_to}' "
