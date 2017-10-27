@@ -64,7 +64,7 @@ module UnisenderRails
         defer: 1
       }
       result = @client.createCampaign create_campaign_params
-      @logger.info "UNISENDER:createCampaign #{email_options}"
+      @logger.info "UNISENDER:createCampaign #{create_campaign_params}"
       @logger.info "UNISENDER:response #{result}"
     end
 
