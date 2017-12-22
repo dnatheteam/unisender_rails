@@ -1,5 +1,4 @@
 require 'uni_sender'
-
 module UnisenderRails
   class Sender
 
@@ -14,12 +13,9 @@ module UnisenderRails
       @client = UniSender::Client.new(@settings[:api_key])
     end
 
-    def users
-      @settings[:users]
-    end
-
     def deliver!(mail)
       mail_to = [*mail.to]
+      @users = @settings[:users_model].where(email: mail_to)
       if mail_to.length == 1
         deliver_email!(mail)
       else
@@ -50,9 +46,10 @@ module UnisenderRails
     def deliver_emails!(mail)
       mail_to = [*(mail.to)]
       return if mail_to.blank?
+      return if @users.blank?
       list_id = create_list(mail.subject)
-      subscribe_users(list_id, users)
-      message_id = create_email_message(list_id)
+      subscribe_users(list_id, @users)
+      message_id = create_email_message(list_id, mail)
       create_campaign(message_id, mail_to)
     end
 
@@ -83,7 +80,7 @@ module UnisenderRails
       ]
     end
 
-    def create_email_message(list_id)
+    def create_email_message(list_id, mail)
       email_options = {
         sender_name: @settings[:sender_name] || mail.from.split('@').first,
         sender_email: mail.from,
@@ -111,3 +108,4 @@ module UnisenderRails
     end
   end
 end
+
