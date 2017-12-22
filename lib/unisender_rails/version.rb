@@ -1,7 +1,7 @@
 module UnisenderRails
   MAJOR = 0
-  MINOR = 0
-  TINY  = 8
+  MINOR = 1
+  TINY  = 0
   PRE   = nil
 
   VERSION = [MAJOR, MINOR, TINY, PRE].compact.join('.')

@@ -41,32 +41,68 @@ module UnisenderRails
       result = @client.sendEmail send_params
       @logger.info "UNISENDER:sendMail #{send_params}"
       @logger.info "UNISENDER:response #{result}"
-
     end
 
     def deliver_emails!(mail)
       mail_to = [*(mail.to)]
+      list_id = create_list(mail.subject)
+      subscribe_users(list_id, mail.users)
+      message_id = create_email_message(list_id)
+      create_campaign(message_id, mail_to)
+    end
+
+    def create_list(subject)
+      list_options = "#{subject} #{Date.today}"
+      @logger.info "UNISENDER:createList #{list_options}"
+      list = @client.createList(title: list_options)
+      @logger.info "UNISENDER:response #{list}"
+      list['result']['id']
+    end
+
+    def subscribe_users(list_id, users)
+      users.in_batches(of: 500) do |batch| 
+        data = batch.map { |user| convert_to_export_format(list_id, user) }
+        fields = %w[email email_status email_availability Name email_list_ids] 
+        @client.importContacts(field_names: fields, data: data)
+        sleep 35
+      end
+    end
+
+    def convert_to_export_format(list_id, user)
+      [
+        user.email,
+        'active',
+        'available',
+        user.printable_name,
+        list_id
+      ]
+    end
+
+    def create_email_message(list_id)
       email_options = {
         sender_name: @settings[:sender_name] || mail.from.split('@').first,
         sender_email: mail.from,
         subject: mail.subject,
-        list_id: @settings[:list_id],
+        list_id: list_id,
         generate_text: 1,
         lang: @settings[:lang] || 'ru',
         body: mail.body
       }
-      result = @client.createEmailMessage(email_options)
       @logger.info "UNISENDER:createEmailMessage #{email_options}"
+      result = @client.createEmailMessage(email_options)
       @logger.info "UNISENDER:response #{result}"
+      result['result']['message_id']
+    end
+
+    def create_campaign(message_id, mail_to)
       create_campaign_params = {
-        message_id: result['result']['message_id'],
+        message_id: message_id,
         contacts: mail_to.join(','),
         defer: 1
       }
-      result = @client.createCampaign create_campaign_params
       @logger.info "UNISENDER:createCampaign #{create_campaign_params}"
+      result = @client.createCampaign create_campaign_params
       @logger.info "UNISENDER:response #{result}"
     end
-
   end
 end
