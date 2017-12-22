@@ -51,7 +51,7 @@ module UnisenderRails
       mail_to = [*(mail.to)]
       return if mail_to.blank?
       list_id = create_list(mail.subject)
-      subscribe_users(list_id, mail.users)
+      subscribe_users(list_id, users)
       message_id = create_email_message(list_id)
       create_campaign(message_id, mail_to)
     end
