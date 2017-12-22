@@ -3,7 +3,6 @@ module UnisenderRails
   class Sender
 
     attr_reader :settings
-    attr_reader :users_model
 
     def initialize(args)
       @settings = { api_key: nil }
