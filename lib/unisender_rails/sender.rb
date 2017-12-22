@@ -14,6 +14,10 @@ module UnisenderRails
       @client = UniSender::Client.new(@settings[:api_key])
     end
 
+    def users
+      @settings[:users]
+    end
+
     def deliver!(mail)
       mail_to = [*mail.to]
       if mail_to.length == 1
@@ -45,6 +49,7 @@ module UnisenderRails
 
     def deliver_emails!(mail)
       mail_to = [*(mail.to)]
+      return if mail_to.blank?
       list_id = create_list(mail.subject)
       subscribe_users(list_id, mail.users)
       message_id = create_email_message(list_id)
