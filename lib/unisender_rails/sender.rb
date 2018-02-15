@@ -91,8 +91,6 @@ module UnisenderRails
         generate_text: 1,
         lang: @settings[:lang] || 'ru',
         body: mail.body,
-        track_read: @settings[:track_read],
-        track_links: @settings[:track_links]
       }
       @logger.info "UNISENDER:createEmailMessage #{email_options}"
       result = @client.createEmailMessage(email_options)
@@ -108,7 +106,9 @@ module UnisenderRails
         track_ga: @settings[:track_ga],
         ga_medium: @settings[:email],
         ga_source: @settings[:adoption],
-        ga_campaign: @settings[:adoption]
+        ga_campaign: @settings[:adoption],
+        track_read: @settings[:track_read],
+        track_links: @settings[:track_links]
       }
       @logger.info "UNISENDER:createCampaign #{create_campaign_params}"
       result = @client.createCampaign create_campaign_params
