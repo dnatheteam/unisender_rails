@@ -36,7 +36,9 @@ module UnisenderRails
         email: mail_to,
         sender_name: @settings[:sender_name] || mail.from.split('@').first,
         list_id: list_id,
-        lang: @settings[:lang] || 'ru'
+        lang: @settings[:lang] || 'ru',
+        track_read: @settings[:track_read],
+        track_links: @settings[:track_links]
       }
       result = @client.sendEmail send_params
       @logger.info "UNISENDER:sendMail #{send_params}"
@@ -88,7 +90,9 @@ module UnisenderRails
         list_id: list_id,
         generate_text: 1,
         lang: @settings[:lang] || 'ru',
-        body: mail.body
+        body: mail.body,
+        track_read: @settings[:track_read],
+        track_links: @settings[:track_links]
       }
       @logger.info "UNISENDER:createEmailMessage #{email_options}"
       result = @client.createEmailMessage(email_options)
@@ -100,7 +104,11 @@ module UnisenderRails
       create_campaign_params = {
         message_id: message_id,
         contacts: mail_to.join(','),
-        defer: 1
+        defer: 1,
+        track_ga: @settings[:track_ga],
+        ga_medium: @settings[:email],
+        ga_source: @settings[:adoption],
+        ga_campaign: @settings[:adoption]
       }
       @logger.info "UNISENDER:createCampaign #{create_campaign_params}"
       result = @client.createCampaign create_campaign_params
