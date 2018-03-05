@@ -15,11 +15,14 @@ module UnisenderRails
 
     def deliver!(mail)
       mail_to = [*mail.to]
+      type    = mail.type
+
       @users = @settings[:users_model].where(email: mail_to)
-      if mail_to.length == 1
-        deliver_email!(mail)
-      else
+
+      if type == 'group'
         deliver_emails!(mail)
+      else
+        deliver_email!(mail)
       end
     end
 
@@ -64,9 +67,9 @@ module UnisenderRails
     end
 
     def subscribe_users(list_id, users)
-      users.in_batches(of: 500) do |batch| 
+      users.in_batches(of: 500) do |batch|
         data = batch.map { |user| convert_to_export_format(list_id, user) }
-        fields = %w[email email_status email_availability Name email_list_ids] 
+        fields = %w[email email_status email_availability Name email_list_ids]
         @client.importContacts(field_names: fields, data: data)
         sleep 35
       end
