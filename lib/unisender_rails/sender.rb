@@ -15,7 +15,7 @@ module UnisenderRails
 
     def deliver!(mail)
       mail_to = [*mail.to]
-      type    = mail.type
+      type    = mail.comments
 
       @users = @settings[:users_model].where(email: mail_to)
 
