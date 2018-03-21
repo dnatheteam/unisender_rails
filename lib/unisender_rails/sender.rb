@@ -5,12 +5,14 @@ module UnisenderRails
     attr_reader :settings
 
     def initialize(args)
+      @logger.info "UNISENDER:INIT start "
       @settings = { api_key: nil }
       args.each do |arg_name, arg_value|
         @settings[arg_name.to_sym] = arg_value
       end
       @logger = @settings[:logger] || Rails.logger
       @client = UniSender::Client.new(@settings[:api_key])
+      @logger.info "UNISENDER:INIT end "
     end
 
     def deliver!(mail)
@@ -20,9 +22,13 @@ module UnisenderRails
       @users = @settings[:users_model].where(email: mail_to)
 
       if type == 'group'
+        @logger.info "UNISENDER:DELIVER_GROUP start "
         deliver_emails!(mail)
+        @logger.info "UNISENDER:DELIVER_GROUP end"
       else
+        @logger.info "UNISENDER:DELIVER_ONE start "
         deliver_email!(mail)
+        @logger.info "UNISENDER:DELIVER_ONE start "
       end
     end
 
