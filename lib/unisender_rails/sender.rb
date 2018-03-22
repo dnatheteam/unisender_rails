@@ -5,12 +5,12 @@ module UnisenderRails
     attr_reader :settings
 
     def initialize(args)
-      @logger.info "UNISENDER:INIT start "
       @settings = { api_key: nil }
       args.each do |arg_name, arg_value|
         @settings[arg_name.to_sym] = arg_value
       end
       @logger = @settings[:logger] || Rails.logger
+      @logger.info "UNISENDER:INIT start "
       @client = UniSender::Client.new(@settings[:api_key])
       @logger.info "UNISENDER:INIT end "
     end
