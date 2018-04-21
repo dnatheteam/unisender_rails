@@ -38,6 +38,7 @@ module UnisenderRails
       result = @client.subscribe fields: { email: mail_to }, list_ids: list_id, double_optin: 3
       @logger.info "UNISENDER:Subscribe '#{mail_to}' "
       @logger.info "UNISENDER:response #{result}"
+      @logger.info "UNISENDER:mail_params #{mail.inspect}"
       send_params = {
         subject: mail.subject,
         body: mail.body,
